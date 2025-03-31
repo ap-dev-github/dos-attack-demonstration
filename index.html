@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Apache Server Status</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            background-color: #111;
+            color: #0f0;
+            text-align: center;
+            margin: 0;
+            padding: 2rem;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .container {
+            border: 2px solid #0f0;
+            border-radius: 5px;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #222;
+        }
+        h1 {
+            color: #0f0;
+            margin-bottom: 2rem;
+            text-shadow: 0 0 5px #0f0;
+        }
+        .status {
+            font-size: 1.5rem;
+            margin: 2rem 0;
+            padding: 1rem;
+            border: 1px solid #0f0;
+            border-radius: 5px;
+            background-color: #1a1a1a;
+        }
+        .online {
+            color: #0f0;
+            animation: pulse 2s infinite;
+        }
+        .terminal {
+            background-color: #000;
+            border: 1px solid #0f0;
+            border-radius: 5px;
+            padding: 1rem;
+            margin-top: 2rem;
+            text-align: left;
+            font-family: monospace;
+            overflow-x: auto;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Apache Web Server</h1>
+        
+        <div class="status">
+            Server Status: <span class="online">ONLINE</span>
+        </div>
+        
+        <p>This server is running Apache 2.4 on Linux</p>
+        <p>IP: <span id="server-ip">192.168.138.129</span></p>
+        
+        <div class="terminal">
+            <p><span style="color: #0ff;">$</span> sudo systemctl status apache2</p>
+            <p>● apache2.service - The Apache HTTP Server</p>
+            <p>   Loaded: loaded (/lib/systemd/system/apache2.service; enabled; vendor preset: enabled)</p>
+            <p>   Active: <span style="color: #0f0;">active (running)</span></p>
+            <br>
+            <p><span style="color: #0ff;">$</span> <span class="blink">_</span></p>
+        </div>
+        
+        <div style="margin-top: 3rem; font-size: 0.9rem; color: #888;">
+            <p>Slowloris attack demonstration target</p>
+            <p id="timestamp"></p>
+        </div>
+    </div>
+
+    <script>
+        // Display current time
+        function updateTime() {
+            const now = new Date();
+            document.getElementById('timestamp').textContent = 
+                `Last updated: ${now.toLocaleString()}`;
+        }
+        setInterval(updateTime, 1000);
+        updateTime();
+        
+        // Get real server IP (optional)
+        fetch('https://api.ipify.org?format=json')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('server-ip').textContent = data.ip;
+            })
+            .catch(() => {
+                // Fallback to local IP if public IP fetch fails
+                document.getElementById('server-ip').textContent = 
+                    window.location.hostname || '192.168.138.129';
+            });
+        
+        // Blinking cursor effect
+        setInterval(() => {
+            const cursor = document.querySelector('.blink');
+            cursor.style.visibility = cursor.style.visibility === 'hidden' ? 'visible' : 'hidden';
+        }, 500);
+    </script>
+</body>
+</html>
